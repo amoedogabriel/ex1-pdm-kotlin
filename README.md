@@ -1,4 +1,4 @@
-Programação de Dispositivos Móveis - PDM
+Programação para Dispositivos Móveis - PDM
 
 Exercício 1
 
