@@ -1,6 +1,10 @@
-fun ehPar(n: Int): Boolean = n % 2 == 0
+fun ehPar(numero: Int): Boolean = numero % 2 == 0
 
 fun main() {
-    println(ehPar(4))
-    println(ehPar(7)) 
+    println("Digite um número inteiro para verificar se é par:")
+    val numero = readln().toInt()
+
+    val resultado = if (ehPar(numero)) "é par" else "é ímpar"
+
+    println("O número $numero $resultado.")
 }

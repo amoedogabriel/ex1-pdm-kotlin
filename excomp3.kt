@@ -1,48 +1,71 @@
-fun main() {
-    val total = 100
-    data class Aluno(val matricula: String, val freq: Int, val final: Double, val aprovado: Boolean)
+data class AlunoAvaliado(
+    val matricula: String,
+    val frequencia: Int,
+    val notaFinal: Double,
+    val situacao: String
+)
 
+fun main() {
+    val alunos = mutableListOf<AlunoAvaliado>()
     var maiorNota = Double.MIN_VALUE
     var menorNota = Double.MAX_VALUE
-    var somaNotas = 0.0
-    var reprovados = 0
-    var reprovadosPorFalta = 0
+    var somaNotasTurma = 0.0
+    var totalReprovados = 0
+    var reprovadosPorInfrequencia = 0
+    val totalAlunos = 100 
 
-    val alunos = List(total) { i ->
-        println("---- Aluno ${i + 1} ----")
-        print("Matrícula: "); val mat = readLine()!!.trim()
-        print("Nota 1: "); val n1 = readLine()!!.toDouble()
-        print("Nota 2: "); val n2 = readLine()!!.toDouble()
-        print("Nota 3: "); val n3 = readLine()!!.toDouble()
-        print("Frequência: "); val freq = readLine()!!.toInt()
+    for (i in 1..totalAlunos) {
+        println("\n--- Aluno $i ---")
+        println("Digite o número de matrícula:")
+        val matricula = readln()
 
-        val final = (n1 + n2 + n3) / 3.0
-        maiorNota = if (final > maiorNota) final else maiorNota
-        menorNota = if (final < menorNota) final else menorNota
-        somaNotas += final
+        println("Digite a primeira nota:")
+        val nota1 = readln().toDouble()
 
-        val aprovado = final >= 60 && freq >= 40
+        println("Digite a segunda nota:")
+        val nota2 = readln().toDouble()
+
+        println("Digite a terceira nota:")
+        val nota3 = readln().toDouble()
+
+        println("Digite o número de aulas frequentadas:")
+        val frequencia = readln().toInt()
+
+        val notaFinal = (nota1 + nota2 + nota3) / 3.0
+        somaNotasTurma += notaFinal
+
+        if (notaFinal > maiorNota) maiorNota = notaFinal
+        if (notaFinal < menorNota) menorNota = notaFinal
+
+        val aprovado = notaFinal >= 60 && frequencia >= 40
+        val situacao = if (aprovado) "Aprovado" else "Reprovado"
+
         if (!aprovado) {
-            reprovados++
-            if (freq < 40) reprovadosPorFalta++
+            totalReprovados++
+            if (frequencia < 40) {
+                reprovadosPorInfrequencia++
+            }
         }
-
-        Aluno(mat, freq, final, aprovado)
+        
+        alunos.add(AlunoAvaliado(matricula, frequencia, notaFinal, situacao))
     }
 
-    val mediaTurma = somaNotas / total
-    val percReprovPorFalta = reprovadosPorFalta.toDouble() * 100 / total
+    val notaMediaTurma = somaNotasTurma / totalAlunos
+    val percentualReprovadosInfrequencia = if (totalReprovados > 0)
+        reprovadosPorInfrequencia.toDouble() * 100 / totalReprovados else 0.0
 
-    println("\n=== RESULTADOS POR ALUNO ===")
-    alunos.forEach {
-        println("Matrícula: ${it.matricula} | Freq: ${it.freq} | Nota: %.2f | %s"
-            .format(it.final, if (it.aprovado) "Aprovado" else "Reprovado"))
+    println("\n\n--- RESULTADOS INDIVIDUAIS ---")
+    for (aluno in alunos) {
+        System.out.printf(
+            "Matrícula: %s, Frequência: %d, Nota Final: %.2f, Situação: %s\n",
+            aluno.matricula, aluno.frequencia, aluno.notaFinal, aluno.situacao
+        )
     }
 
-    println("\n=== RESUMO ===")
-    println("Maior nota: %.2f".format(maiorNota))
-    println("Menor nota: %.2f".format(menorNota))
-    println("Média da turma: %.2f".format(mediaTurma))
-    println("Total reprovados: $reprovados")
-    println("Reprovados por falta (%): %.2f%%".format(percReprovPorFalta))
+    println("\n\n--- ESTATÍSTICAS DA TURMA ---")
+    System.out.printf("Maior nota da turma: %.2f\n", maiorNota)
+    System.out.printf("Menor nota da turma: %.2f\n", menorNota)
+    System.out.printf("Nota média da turma: %.2f\n", notaMediaTurma)
+    println("Total de alunos reprovados: $totalReprovados")
+    System.out.printf("Porcentagem de alunos reprovados por infrequência: %.2f%%\n", percentualReprovadosInfrequencia)
 }

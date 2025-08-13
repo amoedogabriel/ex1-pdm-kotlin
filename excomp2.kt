@@ -1,54 +1,64 @@
 fun main() {
-    var numFeminino = 0
-    var numMasculino = 0
-    var somaIdadeHomensComExp = 0
-    var contHomensComExp = 0
-    var contHomens = 0
-    var contHomensMaior45 = 0
-    var mulheresMenor35ComExp = 0
-    val inscricoesMulheresMenor35 = mutableListOf<Int>()
-    var menorIdadeMulheresComExp: Int? = null
+    var totalFeminino = 0
+    var totalMasculino = 0
+    var somaIdadeHomensComExperiencia = 0
+    var totalHomensComExperiencia = 0
+    var homensMaisDe45 = 0
+    var mulheresMenosDe35ComExperiencia = 0
+    var menorIdadeMulherComExperiencia = Int.MAX_VALUE
+    val inscricaoMulheresItemE = mutableListOf<String>()
 
     while (true) {
-        print("Inscrição (0 encerra): ")
-        val inscricao = readLine()!!.toInt()
-        if (inscricao == 0) break
+        println("\nDigite o número de inscrição do candidato (ou 0 para sair):")
+        val inscricao = readln()
+        if (inscricao == "0") break
 
-        print("Idade: "); val idade = readLine()!!.toInt()
-        print("Sexo (M/F): "); val sexo = readLine()!!.trim().uppercase()
-        print("Experiência? (S/N): "); val exp = readLine()!!.trim().uppercase()
+        println("Digite a idade do candidato:")
+        val idade = readln().toInt()
+
+        println("Digite o sexo (M para masculino, F para feminino):")
+        val sexo = readln().uppercase()
+
+        println("Possui experiência no serviço? (S para sim, N para não):")
+        val experiencia = readln().uppercase()
 
         if (sexo == "F") {
-            numFeminino++
-            if (exp == "S") {
-                if (idade < 35) {
-                    mulheresMenor35ComExp++
-                    inscricoesMulheresMenor35.add(inscricao)
-                }
-                menorIdadeMulheresComExp =
-                    if (menorIdadeMulheresComExp == null) idade
-                    else if (idade < menorIdadeMulheresComExp!!) idade else menorIdadeMulheresComExp
+            totalFeminino++
+            if (idade < 35 && experiencia == "S") {
+                mulheresMenosDe35ComExperiencia++
+                inscricaoMulheresItemE.add(inscricao)
+            }
+            if (experiencia == "S" && idade < menorIdadeMulherComExperiencia) {
+                menorIdadeMulherComExperiencia = idade
             }
         } else if (sexo == "M") {
-            numMasculino++
-            contHomens++
-            if (idade > 45) contHomensMaior45++
-            if (exp == "S") {
-                contHomensComExp++
-                somaIdadeHomensComExp += idade
+            totalMasculino++
+            if (idade > 45) {
+                homensMaisDe45++
+            }
+            if (experiencia == "S") {
+                totalHomensComExperiencia++
+                somaIdadeHomensComExperiencia += idade
             }
         }
     }
 
-    val mediaIdadeHomensExp = if (contHomensComExp > 0) somaIdadeHomensComExp.toDouble() / contHomensComExp else 0.0
-    val percHomensMaior45 = if (contHomens > 0) contHomensMaior45.toDouble() * 100 / contHomens else 0.0
+    val idadeMediaHomensComExperiencia = if (totalHomensComExperiencia > 0)
+        somaIdadeHomensComExperiencia.toDouble() / totalHomensComExperiencia else 0.0
 
-    println("\n=== RESULTADOS ===")
-    println("Feminino: $numFeminino")
-    println("Masculino: $numMasculino")
-    println("Idade média homens com exp: %.2f".format(mediaIdadeHomensExp))
-    println("Homens >45 (%): %.2f%%".format(percHomensMaior45))
-    println("Mulheres <35 com exp: $mulheresMenor35ComExp")
-    println("Inscrições (mulheres <35 com exp): ${inscricoesMulheresMenor35.joinToString(", ").ifEmpty { "Nenhuma" }}")
-    println("Menor idade mulher com exp: ${menorIdadeMulheresComExp ?: "Nenhuma"}")
+    val percentagemHomensMais45 = if (totalMasculino > 0)
+        homensMaisDe45.toDouble() * 100 / totalMasculino else 0.0
+    
+    val menorIdadeFemininoExperienciaStr = if (menorIdadeMulherComExperiencia == Int.MAX_VALUE) 
+        "Nenhuma mulher com experiência" else menorIdadeMulherComExperiencia.toString()
+
+
+    println("\n--- RESULTADO DO LEVANTAMENTO ---")
+    println("a) Número de candidatos do sexo feminino: $totalFeminino")
+    println("b) Número de candidatos do sexo masculino: $totalMasculino")
+    System.out.printf("c) Idade média dos homens com experiência: %.1f anos\n", idadeMediaHomensComExperiencia)
+    System.out.printf("d) Porcentagem de homens com mais de 45 anos: %.2f%%\n", percentagemHomensMais45)
+    println("e) Número de mulheres com idade inferior a 35 anos e com experiência: $mulheresMenosDe35ComExperiencia")
+    println("f) Menor idade entre as mulheres com experiência: $menorIdadeFemininoExperienciaStr")
+    println("\nInscrição das mulheres com menos de 35 anos e com experiência: ${inscricaoMulheresItemE.joinToString(", ")}")
 }
